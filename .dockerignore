@@ -1,0 +1,17 @@
+.venv
+venv
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.git
+.gitignore
+.pytest_cache
+.mypy_cache
+.coverage
+htmlcov
+.env
+serviceAccountKey.json
+instance
+.idea
+.vscode

@@ -4,6 +4,7 @@ import json
 import re
 import time
 from pathlib import Path
+import logging
 
 from flask import jsonify, request
 from firebase_admin import firestore
@@ -15,6 +16,7 @@ from utils.validation import normalize_profile_data, require_json_content_type, 
 
 from . import api_bp
 
+logger = logging.getLogger(__name__)
 
 @api_bp.get("/profile")
 @require_jwt
@@ -141,11 +143,27 @@ def api_sensor_data():
     """Receive sensor data from IoT devices (requires API key authentication)."""
     content_error = require_json_content_type()
     if content_error:
+        logger.warning(
+            "Sensor data rejected: invalid content type",
+            extra={
+                "method": request.method,
+                "path": request.path,
+                "status_code": 400,
+            },
+        )
         return content_error
 
     data = request.get_json(silent=True) or {}
 
     if not data:
+        logger.warning(
+            "Sensor data rejected: empty request body",
+            extra={
+                "method": request.method,
+                "path": request.path,
+                "status_code": 400,
+            },
+        )
         return jsonify({"error": "Request body cannot be empty"}), 400
 
     doc_id = str(int(time.time() * 1000))
@@ -154,6 +172,16 @@ def api_sensor_data():
             "data": data,
             "timestamp": firestore.SERVER_TIMESTAMP,
         }
+    )
+
+    logger.info(
+        "Sensor data received successfully",
+        extra={
+            "method": request.method,
+            "path": request.path,
+            "status_code": 201,
+            "doc_id": doc_id,
+        },
     )
 
     return jsonify({"message": "Sensor data received successfully", "id": doc_id}), 201

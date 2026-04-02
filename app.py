@@ -6,6 +6,9 @@ from blueprints.dashboard import dashboard_bp
 from blueprints.profile import profile_bp
 from config import Config
 import firebase  # noqa: F401
+from utils.logging_config import configure_logging
+
+configure_logging()
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -16,4 +19,4 @@ app.register_blueprint(profile_bp)
 app.register_blueprint(api_bp)
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    app.run(host="0.0.0.0", port=5000, debug=True)
