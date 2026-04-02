@@ -1,4 +1,4 @@
-*Docker Proof*
+# Docker Lab Proof Screenshots
 
 **Docker Compose Startup**
 ![Docker compose startup](screenshots/docker_compose.png)
